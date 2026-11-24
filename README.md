@@ -1,5 +1,9 @@
 # KMusic
 
+[![Docker Hub](https://img.shields.io/badge/docker-kev1nt%2Fkmusic-2496ED?logo=docker&logoColor=white)](https://hub.docker.com/r/kev1nt/kmusic)
+[![GitHub](https://img.shields.io/github/stars/Kev1nT/KMusic?style=social)](https://github.com/Kev1nT/KMusic)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 自建的音乐库下载与整理中心：一个 Web 界面聚合 **QQ 音乐 / 网易云 / 汽水音乐 / Apple Music** 的搜索、下载、刮削与在线播放，按你的命名规则落成 Emby、Jellyfin、Navidrome 能直接识别的音乐库。
 
 > 仅供个人学习与自用，请使用自己付费的会员账号，下载内容请勿传播。
@@ -61,6 +65,8 @@
 ## 快速开始
 
 ### 方式一：Docker Compose（推荐）
+
+已发布镜像：`kev1nt/kmusic:latest`（Docker Hub）
 
 ```bash
 git clone https://github.com/Kev1nT/KMusic.git
