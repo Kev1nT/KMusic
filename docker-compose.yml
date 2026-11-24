@@ -1,0 +1,62 @@
+name: kmusic
+
+services:
+  kmusic:
+    image: ${KMUSIC_IMAGE:-kev1nt/kmusic:latest}
+    build: .
+    container_name: kmusic
+    restart: unless-stopped
+    # 与 apple-wrapper 共享网络命名空间，才能访问它只监听 127.0.0.1:12340 的解密服务
+    network_mode: "service:apple-wrapper"
+    environment:
+      TZ: ${TZ:-Asia/Shanghai}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1001}
+      NETEASE_API_URL: http://127.0.0.1:3000
+      APPLE_WRAPPER_URL: http://127.0.0.1:12340
+    depends_on:
+      - apple-wrapper
+    volumes:
+      - ./data:/data
+      - ${MUSIC_HOST_DIR:-./music}:/music
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:8080/api/health']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+    logging:
+      driver: json-file
+      options:
+        max-size: '20m'
+        max-file: '3'
+
+  # Apple Music FairPlay 解密后端（wrapper-lite）
+  # 不用 Apple Music 时可以不配置账号，其它平台的下载不受影响。
+  apple-wrapper:
+    image: ghcr.io/worldobservationlog/wrapper-lite:latest
+    container_name: kmusic-apple-wrapper
+    restart: on-failure:3
+    privileged: true
+    ports:
+      - "${KMUSIC_PORT:-8090}:8080"
+    # 必须用公网 DNS：docker 内网 DNS(127.0.0.11) 会导致 Apple 登录鉴权失败
+    dns:
+      - 223.5.5.5
+      - 114.114.114.114
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      TZ: ${TZ:-Asia/Shanghai}
+      USERNAME: ${APPLE_ID:-}
+      PASSWORD: ${APPLE_PASSWORD:-}
+    volumes:
+      - ./apple-wrapper:/app/rootfs/data
+      - ./docker/apple-wrapper-entry.sh:/app/entrypoint-custom.sh:ro
+    entrypoint: ['/bin/sh', '/app/entrypoint-custom.sh']
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '2'

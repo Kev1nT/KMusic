@@ -1,0 +1,27 @@
+# 依赖与构建产物
+node_modules/
+web/dist/
+server/dist/
+dist/
+
+# 运行数据（含数据库、密钥、日志）
+data/
+music/
+apple-wrapper/
+*.db
+*.db-*
+*.sqlite
+*.log
+tmp/
+
+# 本地配置与凭据
+.env
+.env.local
+*.pem
+
+# Apple 引擎二进制（用 scripts/fetch-engine.sh 获取）
+vendor/*
+!vendor/.gitkeep
+
+.cache/
+.DS_Store
